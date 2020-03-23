@@ -1,22 +1,27 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import { Route, Link, Redirect, Switch, withRouter} from "react-router-dom";
 import './App.css';
 
 class App extends Component {
-  constructor (){
+  constructor() {
     super();
 
     this.state = {
-      
+
     }
   }
 
-  render (){
+  render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <h1>Inside App component</h1>
-        </header>
-      </div>
+        <nav>
+          <div>
+          <h1>Jared &amp; Seamus's Grubhub</h1>
+          <Link to="/Admin">Admin</Link>
+          </div>
+          <hr />
+        </nav>
+        </div>
     );
   }
 }
