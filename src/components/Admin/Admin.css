@@ -1,0 +1,13 @@
+nav {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  nav a {
+    margin: auto;
+  }
+
+  .Admin h1{
+    text-align: center;
+    margin-bottom: 10px;
+  }

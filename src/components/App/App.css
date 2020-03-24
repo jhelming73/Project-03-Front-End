@@ -1,9 +1,19 @@
-nav div {
+
+.AppNav {
+  display: flex;
+  flex-direction: column;
+  }
+
+  hr{
+    width: 100%;
+  }
+
+.AppNav div {
   display: flex;
   flex-direction: row;
 }
 
-nav a {
+.AppNav a {
   margin: auto;
 }
 
