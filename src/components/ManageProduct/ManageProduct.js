@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import "./AddProduct.css"
+import "./ManageProduct.css"
 import axios from 'axios';
 
 const backendUrl = "http://localhost:8080/api/products/";
 
-class AddProduct extends Component {
+class ManageProduct extends Component {
     constructor(props) {        
         super(props)
         this.state = {
@@ -12,14 +12,14 @@ class AddProduct extends Component {
             imageURL: "",
             price: 0.0
         }
-        console.log("Inside AddProduct.contructor()", this.props)
+        console.log("Inside ManageProduct.contructor()", this.props)
     }
     
     handleChange = (event) => {
         this.setState({
           [event.target.name]: event.target.value
         })
-        console.log("Inside AddProduct.handleChange()", this.state)
+        console.log("Inside ManageProduct.handleChange()", this.state)
       }
 
       handleSubmit = event => {
@@ -69,4 +69,4 @@ class AddProduct extends Component {
     }
 }
 
-export default AddProduct
+export default ManageProduct
