@@ -1,0 +1,12 @@
+.Product{
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+}
+.Description {
+    margin-right: 10px;
+}
+
+.Product a{
+    margin-right: 20px;
+}
