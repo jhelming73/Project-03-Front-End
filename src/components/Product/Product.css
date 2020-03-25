@@ -1,12 +1,26 @@
-.Product{
+.ProductContainer {
     display: flex;
     flex-direction: column;
-    margin: auto;
+    width: 200px;
+    height: auto;
 }
-.Description {
+
+.ProductContainer .Description {
     margin-right: 10px;
 }
 
-.Product a{
+.ImageContainer {
+    width: 150px;;
+    height: 100px;
+}
+
+/* https://www.geeksforgeeks.org/resize-image-proportionally-with-css/ */
+.ProductContainer .ImageContainer img {
+    max-width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.ProductContainer footer a {
     margin-right: 20px;
 }
