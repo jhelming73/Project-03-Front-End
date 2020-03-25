@@ -1,23 +1,21 @@
+.App {
+  margin: 20px;
+}
 
-.AppNav {
+.App header {
   display: flex;
   flex-direction: column;
-  }
+}
 
-  hr{
-    width: 100%;
-  }
-
-.AppNav div {
+.App header div {
   display: flex;
   flex-direction: row;
 }
 
-.AppNav a {
+.App header a {
   margin: auto;
 }
 
-h1 {
-  width: 60%;
-  margin: auto;
+.App header hr {
+  width: 100%;
 }
