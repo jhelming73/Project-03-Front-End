@@ -1,8 +1,9 @@
-label {
+.ManageProduct label {
     display: inline-block;
     text-align: right;
 }
 
-img {
-    width: 300px;
-}
+.ManageProduct h2 {
+    font-size: 1.0em;
+    text-align: left;
+  }
