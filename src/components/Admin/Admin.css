@@ -1,19 +1,16 @@
-nav {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 10px;
-  }
-  
-  nav a {
-    margin: auto;
-  }
+.Admin nav {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+}
 
-  .Admin h1{
-    text-align: center;
-    margin-bottom: 10px;
-  }
+.Admin h2 {
+  font-size: 1.0em;
+  text-align: left;
+}
 
-  .ProductsContainer {
-    display: flex;
-    flex-direction: row;
-     }
+.ProductsContainer {
+  display: flex;
+  flex-direction: row;
+  flex-flow: row wrap;
+}
