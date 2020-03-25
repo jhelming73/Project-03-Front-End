@@ -1,22 +1,24 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
-import "./Product.css"
+import { Link } from 'react-router-dom';
+import "./Product.css";
 
 const Product = (props) => {
-    console.log("Inside Product props=", props)
-           return (
-            <div className="Product">
-               <img src={props.product.imageURL}></img>
-               <div>     
-                    <label className="Description">{props.product.description}</label>
-                    <label className="Price">${props.product.price.$numberDecimal}</label>
-                    <footer>
-                    <Link to='/ManageProduct'>Update</Link> 
-                    <Link to=''>Delete</Link>
-                    </footer>
-               </div>
-            </div>
-       )
-   }
+   console.log("Inside Product props=", props);
+   return (
+      <div className="ProductContainer">
+         <div className="ImageContainer">
+            <img src={props.product.imageURL} alt=""></img>
+         </div>
+      <div>
+            <label className="Description">{props.product.description}</label>
+            <label className="Price">${props.product.price.$numberDecimal}</label>
+            <footer>
+               <Link to='/ManageProduct'>Update</Link>
+               <Link to=''>Delete</Link>
+            </footer>
+         </div>
+      </div>
+   );
+};
 
-export default Product
+export default Product;
