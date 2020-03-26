@@ -18,7 +18,6 @@ class App extends Component {
       , currentOrder: []      
     };
     console.log("Inside App.constructor(), props =", this.props, "state =", this.state);
-    this.removeProductFromOrder = this.removeProductFromOrder.bind(this);
  }
 
   componentDidMount() {
