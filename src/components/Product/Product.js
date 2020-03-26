@@ -1,24 +1,28 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import "./Product.css";
+import ProductAction from '../ProductAction/ProductAction';
+import './Product.css';
 
-const Product = (props) => {
-   console.log("Inside Product props=", props);
+const Product = (props) => {   
+
+   console.log("Inside Product, props=", props);
+
+   let description = props.product.description;
+   let imageURL = props.product.imageURL;
+   let price = Number(props.product.price.$numberDecimal).toFixed(2);
+      
    return (
       <div className="ProductContainer">
-         <div className="ImageContainer">
-            <img src={props.product.imageURL} alt=""></img>
+         <div className="ProductImageContainer">
+            <img src={imageURL} alt=""></img>
          </div>
-      <div>
-            <label className="Description">{props.product.description}</label>
-            <label className="Price">${props.product.price.$numberDecimal}</label>
-            <footer>
-               <Link to='/ManageProduct'>Update</Link>
-               <Link to=''>Delete</Link>
-            </footer>
+         <div className="ProductDetails">
+            <label className="Description">{description}</label>
+            <label className="Price">${price}</label>
          </div>
+         <ProductAction {...props}/>
       </div>
    );
+
 };
 
 export default Product;
