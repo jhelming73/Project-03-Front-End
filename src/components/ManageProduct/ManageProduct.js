@@ -1,59 +1,60 @@
 import React, { Component } from 'react';
-import "./ManageProduct.css";
 import axios from 'axios';
+import "./ManageProduct.css";
 
-const backendUrl = "http://localhost:8080/api/products/";
+const backendURL = "http://localhost:8080/api";
 
 class ManageProduct extends Component {
-    
-    constructor(props) {        
+
+    constructor(props) {
         super(props);
-        
+
         this.state = {
-            description: "",
-            imageURL: "",
-            price: 0.0
+              description: '' 
+            , imageURL:    ''
+            , price:       ''
         };
         console.log("Inside ManageProduct.contructor(), props =", this.props, "state =", this.state);
     }
-    
+
     componentDidMount() {
         console.log("Inside ManageProduct.componentDidMount(), props =", this.props, "state =", this.state);
-        this.props.handleLinkUpdate();
-      }
-   
+    }
+
+    componentDidUpdate() {
+        console.log("Inside ManageProduct.componentDidUpdate(), props =", this.props, "state =", this.state);
+    }
+
     handleChange = (event) => {
+        console.log("Inside ManageProduct.handleChange(), event.target =", event.target);
         this.setState({
-          [event.target.name]: event.target.value
-        });
-        console.log("Inside ManageProduct.handleChange(), props =", this.props, "state =", this.state);
-      }
-
-      handleSubmit = event => {
-        event.preventDefault();
-        this.createProduct();
-        this.props.history.push('/Admin');
-      }
-
-      createProduct() {
-        axios({
-          method: "post",
-          url: backendUrl,
-          data: {
-            description: this.state.description,
-            imageURL: this.state.imageURL,
-            price: this.state.price
-          }
-        }).then(product => {
-            console.log(product);
+            [event.target.name]: event.target.value
         });
     }
 
+    manageProduct() {
+        console.log("Inside App.createProduct(), state = ", this.state);    
+        axios({
+          method: "post",
+          url: `${backendURL}/products`,
+          data: {
+            product: this.state.product
+          }
+        })
+        .then( product => {
+          this.setState( (prevState) => ({
+            products: [...prevState.products, product.data]
+           })
+         );
+         console.log("Inside App.createProduct.axios.then(), state = ", this.state, " product = ", product);
+        });
+      }
+    
     render() {
+        console.log("Inside ManageProduct.render(), props =", this.props, "state =", this.state); 
         return (
             <div className="ManageProduct">
-                <h2>Adminstration - Add Product</h2>
-                <form onChange={this.handleChange} onSubmit={this.handleSubmit}>
+                <form onChange={this.handleChange} onSubmit={this.props.handleCreateProduct}>
                     <div>
                         <label>Description:</label>
                         <input type="text" name="description" />
