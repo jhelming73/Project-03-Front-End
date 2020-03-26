@@ -1,0 +1,30 @@
+.ProductsContainer {
+    display: flex;
+    flex-direction: column;
+  }
+
+.ProductsActionInfo {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+
+.ProductsActionInfo p {
+  margin: 0px 0px 0px 20px;
+}
+
+.Products {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.OrderSubmission {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.OrderSubmission p:first-child {
+  margin-left: 0px;
+}
