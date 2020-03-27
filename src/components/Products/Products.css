@@ -6,7 +6,23 @@
 .ProductsActionInfo {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   margin-bottom: 10px;
+}
+
+.PageInfo h2 {
+  margin: 0;
+  font-size: 1em;
+}
+
+.DetailsInfo {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-inline-start: auto;
+  margin-top: auto;
+  margin-bottom: auto;
+  font-size: 0.8em;
 }
 
 .ProductsActionInfo p {

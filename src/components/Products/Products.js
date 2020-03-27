@@ -8,37 +8,46 @@ const Products = (props) => {
     console.log("Inside Products, props =", props);
     
     let products = [];
+    let pageInfo = '';
     let productsAction = '';
     let productsInfo = '';
-    let orderId = '';
-    let orderTotal = 0.00;
+    let orderId = props.currentOrderId;
+    let orderTotal = props.currentOrderTotal.toFixed(2);    
     let numProducts = 0;
     
     switch(props.location.pathname) {
         
         case '/':
+            pageInfo = <h2>Products</h2>;
             productsAction =  <Link to='/order-details'>Order Details</Link>;
-            orderTotal = Number(getOrderTotal()).toFixed(2);
             numProducts = props.currentOrder.length;
             productsInfo   = <p>${orderTotal} ({numProducts} items)</p>;
             products = getAvailableProducts();
             break;
 
         case '/order-details':
-            productsAction = <Link to='/submit-order'>Submit Order</Link>;
-            orderTotal = Number(getOrderTotal()).toFixed(2);
+            pageInfo = <h2>Order Details</h2>;
+            productsAction = <Link to='/submit-order' 
+                onClick={(event) => props.handleSubmitOrder(event, props.order)}>Submit Order</Link>;
             numProducts = props.currentOrder.length;
             productsInfo   = <p>${orderTotal} ({numProducts} items)</p>;
             products = getOrderedProducts();
             break;
 
-        case '/submit-order':
-            orderTotal = Number(getOrderTotal()).toFixed(2);
+        case '/manage-products':
+            pageInfo = <h2>Administration - Manage Products</h2>;    
+            productsAction = <Link to='/add-product'>Add Product</Link>;
+            products = getAvailableProducts();
+            break;
+
+        case '/order-confirmation':
+            console.log("inside Products.case.order-confirmation, props = ", props);
+            pageInfo = <h2>Order Receipt</h2>;
             numProducts = props.currentOrder.length;
             productsInfo =  
                 <span className="OrderSubmission">
                     <p>Thank you for your order!</p>
-                    <p>Order # </p>
+                    <p>Order #{orderId}</p>
                     <p>Order Total: ${orderTotal} ({numProducts} items)</p>
                 </span>;
             products = getOrderedProducts();
@@ -50,8 +59,9 @@ const Products = (props) => {
     function getAvailableProducts() {
         // Create a mapped array of available products
         return props.dbProducts.map( (product) => {
+            let randomKey = Math.round(Math.random() * 1000000000);
             return (
-                <Product key={product._id} product={product} {...props}/>
+                <Product key={randomKey} product={product} {...props}/>
             );
         });
     };
@@ -59,25 +69,23 @@ const Products = (props) => {
     function getOrderedProducts() {
         // Create a mapped array of order items
         return props.currentOrder.map( (product) => {
+            let randomKey = Math.round(Math.random() * 1000000000);
             return (
-                <Product key={product._id} product={product} {...props}/>
+                <Product key={randomKey} product={product} {...props}/>
             );
         });
-    };
-
-    function getOrderTotal() {
-        let total = 0;
-        props.currentOrder.forEach( (product) => {
-            total += parseFloat(product.price.$numberDecimal);
-        });  
-       return total;      
-    }
+    };    
 
     // Return the array of Product components
     return (
         <div className="ProductsContainer">            
             <div className="ProductsActionInfo">
-                {productsAction}{productsInfo}
+                <div className="PageInfo">
+                    {pageInfo}
+                </div>
+                <div className="DetailsInfo">
+                    {productsAction}{productsInfo}
+                </div>
             </div>
             <div className="Products">
                 {products}

@@ -7,3 +7,15 @@
     font-size: 1.0em;
     text-align: left;
   }
+
+.ManageProduct ProductImageContainer {
+    width: 150px;;
+    height: 100px;
+}
+
+/* https://www.geeksforgeeks.org/resize-image-proportionally-with-css/ */
+.ManageProduct .ProductImageContainer img {
+    max-width: 100%;
+    height: 100%;
+    object-fit: contain;
+}

@@ -16,10 +16,20 @@ const ProductAction = (props) => {
 
         case '/order-details':
             productActions = <Link to='/order-details' 
-                onClick={(event) => props.handleRemoveProductFromOrder(event, props.product)}>Remove</Link>;
+                onClick={(event) => 
+                    props.handleRemoveProductFromOrder(event, props.product)}>Remove</Link>;
             break;
 
-        case '/submit-order':            
+        case '/manage-products':
+            productActions = 
+                <span>
+                    <Link to='/update-product' onClick={() => 
+                        props.handleUpdateCurrentProduct(props.product)}>Update</Link>
+                    <Link to='/delete-product'>Delete</Link>
+                </span>;
+            break;
+            
+        case '/submit-order':                        
             break;
 
         default: productActions = 'There is no default - this is a dummy';

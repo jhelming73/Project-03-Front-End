@@ -1,19 +1,23 @@
 .App {
-  margin: 20px;
+  margin: auto;
+  width: 80%;
 }
 
 .App header {
   display: flex;
   flex-direction: column;
+  font-size: 0.8em;
 }
 
-.App header div {
+.App .HeaderInfo {
   display: flex;
   flex-direction: row;
 }
 
-.App header a {
-  margin: auto;
+.App .SiteNav {
+  margin-inline-start: auto;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .App header hr {
