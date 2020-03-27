@@ -40,7 +40,8 @@ class App extends Component {
  
   handleAddProductToOrder = (product) => {
     console.log("Inside App.handleAddProductToOrder(), product =", product);
-    this.addProductToOrder(product);  
+    this.addProductToOrder(product);
+    this.resetCurrentProduct();  
   }
 
   addProductToOrder = (product) => {
@@ -232,6 +233,7 @@ handleCreateProduct = event => {
     .then( product => {
      this.getProducts(); // Reset products from database
      console.log("Inside App.createProduct.axios.then(), state = ", this.state, " product = ", product);
+     this.resetCurrentProduct();
     }); 
   }
   
