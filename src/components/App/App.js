@@ -10,7 +10,7 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.backendURL = "http://localhost:8080/api";
+    this.backendURL = process.env.REACT_APP_BACKEND_APP_URL || "http://localhost:8080/api";
 
     this.state = {        
         dbProducts:   []
