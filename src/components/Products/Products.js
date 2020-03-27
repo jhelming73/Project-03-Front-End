@@ -35,6 +35,7 @@ const Products = (props) => {
             break;
 
         case '/manage-products':
+        case '/delete-product':
             pageInfo = <h2>Administration - Manage Products</h2>;    
             productsAction = <Link to='/add-product'>Add Product</Link>;
             products = getAvailableProducts();

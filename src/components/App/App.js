@@ -110,6 +110,7 @@ handleDeleteProduct = (event, product) => {
 
 deleteProduct = (product) => {
   console.log("Inside App.deleteProduct(), product =", product);  
+  this.resetCurrentProduct();
 }
 
  handleSubmitOrder = () => {
@@ -161,6 +162,11 @@ handleCreateProduct = event => {
     this.setState({currentProduct: product});
     console.log("Inside App.updateCurrentProduct(), state = ", this.state);    
   }
+
+  resetCurrentProduct = () => {
+    this.setState({currentProduct: [] });  
+  }
+
 
   // handleUpdateProduct = (product) => {
   //   console.log("Inside App.handleUpdateProduct(), state = ", this.state);
@@ -412,11 +418,19 @@ handleCreateProduct = event => {
             handleUpdateCurrentProduct={this.handleUpdateCurrentProduct}/>}
           />
 
+        <Route path="/delete-product" render={(props) => <Products
+            {...props} {...this.state}
+            handleRemoveProductFromOrder={this.handleRemoveProductFromOrder}
+            handleSubmitOrder={this.handleSubmitOrder} 
+            handleUpdateCurrentProduct={this.handleUpdateCurrentProduct}
+            backendURL={this.backendURL} /> }
+          />
+
           <Route path="/order-confirmation" render={(props) => <Products
             {...props} {...this.state}
           />} />
           
-          <Route path="/delete-product" render={() => <Redirect to="/manage-products" />} />
+          {/* <Route path="/delete-product" render={() => <Redirect to="/manage-products" />} /> */}
           <Route path="/submit-order" render={() => <Redirect to="/order-confirmation" />} />         
           <Route path="/*" render={() => <Redirect to="/" />} />
 

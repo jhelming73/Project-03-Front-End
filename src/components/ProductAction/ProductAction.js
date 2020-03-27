@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import axios from 'axios';
 import './ProductAction.css';
 
 const ProductAction = (props) => {
@@ -28,6 +29,21 @@ const ProductAction = (props) => {
                     <Link to='/delete-product'>Delete</Link>
                 </span>;
             break;
+
+        case '/delete-product':
+            console.log(`${props.backendURL}/products/${props.product._id}`);
+            productActions =  <span>
+                    <Link to='/update-product' onClick={() => 
+                        props.handleUpdateCurrentProduct(props.product)}>Update</Link>
+                    <Link to='/delete-product'>Delete</Link>
+                </span>;
+           /*  axios({ 
+                method: 'delete'
+              , url: `${props.backendURL}/products/${props.product._id}`
+            })
+            .then(deletedProduct => {
+              console.log("deletedProduct = ", deletedProduct);             
+            }); */ 
             
         case '/submit-order':                        
             break;
