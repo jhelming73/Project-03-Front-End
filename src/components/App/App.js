@@ -154,7 +154,7 @@ handleCreateProduct = event => {
   handleUpdateCurrentProduct = (product) => {
     console.log("Inside App.handleUpdateCurrentProduct(), state = ", this.state);
     this.updateCurrentProduct(product);
-    this.props.history.push('/Admin');
+    this.props.history.push('/manage-products');
   }
 
   updateCurrentProduct = (product) => {
@@ -188,31 +188,45 @@ handleCreateProduct = event => {
 
   // }
 
-  handleDeleteProduct = event => {
+  handleUpdateProduct = event => {
     event.preventDefault();
-    console.log("Inside App.handleDeleteProduct(), state = ", this.state);
+    console.log("Inside App.handleUpdateProduct(), state = ", this.state);
     this.updateProduct();
-    this.props.history.push('/Admin');
+    this.props.history.push('/manage-products');
   }
 
-  deleteProduct = () => {
-    console.log("Inside App.deleteProduct(), state = ", this.state);    
-    /* axios({
-      method: "post",
-      url: `${this.backendURL}/products`,
+  updateProduct = () => {
+    console.log("Inside App.updateProduct(), state = ", this.state);    
+    
+    let updatedDescription = '';
+    let updatedImageURL = '';
+    let updatedPrice = '';
+
+    updatedDescription = this.state.description 
+    ? this.state.description 
+    : this.state.currentProduct.description;
+    
+    updatedImageURL = this.state.imageURL 
+    ? this.state.imageURL 
+    : this.state.currentProduct.imageURL;
+
+    updatedPrice = this.state.price 
+    ? this.state.price 
+    : this.state.currentProduct.price.$numberDecimal;    
+    
+    axios({
+      method: "put",
+      url: `${this.backendURL}/products/${this.state.currentProduct._id}`,
       data: {
-          description: this.state.description
-        , imageURL: this.state.imageURL
-        , price: this.state.price
+          description: updatedDescription 
+        , imageURL: updatedImageURL
+        , price: updatedPrice
       }
     })
     .then( product => {
-      this.setState( (prevState) => ({
-        dbProducts: [...prevState.dbProducts, product.data]
-       })
-     );
+     this.getProducts(); // Reset products from database
      console.log("Inside App.createProduct.axios.then(), state = ", this.state, " product = ", product);
-    }); */
+    }); 
   }
   
   getProducts() {
