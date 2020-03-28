@@ -11,7 +11,7 @@ const ProductAction = (props) => {
         
         case '/':
             productActions = <Link to='/add-to-order' 
-                onClick={() => props.handleAddProductToOrder(props.product)}>Add To Order</Link>;
+                onClick={(event) => props.handleAddProductToOrder(event, props.product)}>Add To Order</Link>;
             break;
 
         case '/order-details':

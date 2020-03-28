@@ -40,10 +40,10 @@ class App extends Component {
     this.setState({ description: '', imageURL: '', price: '' });
   }
 
-  handleAddProductToOrder = (product) => {
+  handleAddProductToOrder = (event, product) => {
     console.log("Inside App.handleAddProductToOrder(), product =", product);
     this.addProductToOrder(product);
-    this.resetCurrentProduct();
+    this.resetCurrentProduct(event);
   }
 
   addProductToOrder = (product) => {
@@ -416,15 +416,6 @@ class App extends Component {
             handleSubmitOrder={this.handleSubmitOrder}
             handleUpdateCurrentProduct={this.handleUpdateCurrentProduct} />}
           />
-
-          {/*  <Route path="/delete-product" render={(props) => <Products
-            {...props} {...this.state}
-            handleRemoveProductFromOrder={this.handleRemoveProductFromOrder}
-            handleSubmitOrder={this.handleSubmitOrder} 
-            handleUpdateCurrentProduct={this.handleUpdateCurrentProduct}
-            backendURL={this.backendURL}/> }
-            handleDeleteProduct={this.handleDeleteProduct}
-          /> */}
 
           <Route path="/order-confirmation" render={(props) => <Products
             {...props} {...this.state}
