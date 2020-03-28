@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Route, Link, Redirect, Switch, withRouter} from "react-router-dom";
+import { Route, Link, Redirect, Switch, withRouter } from "react-router-dom";
 import './App.css';
 import Products from '../Products/Products';
 import ManageProduct from '../ManageProduct/ManageProduct';
 import axios from 'axios';
+import _ from 'underscore'; // http://adripofjavascript.com/blog/drips/object-equality-in-javascript.html
 
 class App extends Component {
 
@@ -12,17 +13,17 @@ class App extends Component {
 
     this.backendURL = process.env.REACT_APP_BACKEND_APP_URL || "http://localhost:8080/api";
 
-    this.state = {        
-        dbProducts:   []
-      , dbOrder:      []  // The order we just created in the db
-      , dbOrders:     []
+    this.state = {
+      dbProducts: []
+      , dbOrder: []  // The order we just created in the db
+      , dbOrders: []
       , currentOrder: []
-      , currentProduct: []
+      , currentProduct: [] // Used in calculating current 'customer' order total 
       , currentOrderTotal: 0.00
-      , currentOrderId: 0   
+      , currentOrderId: 0
     };
     console.log("Inside App.constructor(), props =", this.props, "state =", this.state);
- }
+  }
 
   componentDidMount() {
     this.getProducts();
@@ -37,11 +38,11 @@ class App extends Component {
       this.props.history.push('/');  // Redirect to '/' 
     } */
   }
- 
+
   handleAddProductToOrder = (product) => {
     console.log("Inside App.handleAddProductToOrder(), product =", product);
     this.addProductToOrder(product);
-    this.resetCurrentProduct();  
+    this.resetCurrentProduct();
   }
 
   addProductToOrder = (product) => {
@@ -57,76 +58,80 @@ class App extends Component {
 
   handleRemoveProductFromOrder = (event, product) => {
     event.preventDefault();
-    console.log("Inside App.handleRemoveProductFromOrder(), product =", product);    
-    this.removeProductFromOrder(product); 
+    console.log("Inside App.handleRemoveProductFromOrder(), product =", product);
+    this.removeProductFromOrder(product);
   }
 
-  removeProductFromOrder = (product) => {    
+  removeProductFromOrder = (product) => {
     console.log("Inside App.removeProductFromOrder(), product =", product);
-    
+
     let currentOrder = this.state.currentOrder.slice();
     let index = null;
 
     // Find the product in the current order
-    for (let i = 0; i < currentOrder.length; i++){ 
+    for (let i = 0; i < currentOrder.length; i++) {
       if (currentOrder[i]._id === product._id) {
         index = i;
         break;
       };
-    }    
+    }
 
     currentOrder.splice(index, 1);
-    
+
     let currentOrderTotal = this.getCurrentOrderTotal(currentOrder);
 
     if (index !== null) {
       this.setState(({
-          currentOrder: currentOrder
+        currentOrder: currentOrder
         , currentOrderTotal: currentOrderTotal
       }));
     }
- }
+  }
 
-handleAddDetailsToProduct = (event, product) => {
-  event.preventDefault();
-  console.log("Inside App.handleAddDetailsToProduct(), product =", product);    
-  this.addDetailsToProduct(product); 
-}
+  handleAddDetailsToProduct = (event, product) => {
+    event.preventDefault();
+    console.log("Inside App.handleAddDetailsToProduct(), product =", product);
+    this.addDetailsToProduct(product);
+  }
 
-handleOnChange = (event) => {
-  console.log("Inside App.handleOnChange(), event.target.value =", event.target.value);
-  this.setState({ [event.target.name]: event.target.value });  
-}
+  handleOnChange = (event) => {
+    console.log("Inside App.handleOnChange(), event.target.value =", event.target.value);
+    this.setState({ [event.target.name]: event.target.value });
+  }
 
-addDetailsToProduct = (product) => {
-  console.log("Inside App.addDetailsToProduct(), product =", product);
-  this.setState(({currentProduct: product })); 
-}
+  addDetailsToProduct = (product) => {
+    console.log("Inside App.addDetailsToProduct(), product =", product);
+    this.setState(({ currentProduct: product }));
+  }
 
-handleDeleteProduct = (event, product) => {
-  event.preventDefault();
-  console.log("Inside App.handleDeleteProduct(), product =", product);    
-  this.deleteProduct(product); 
-}
+  handleDeleteProduct = (event, product) => {
+    event.preventDefault();
+    console.log("Inside App.handleDeleteProduct(), product =",
+      product, "event.target =", event.target, "event.target.id =", event.target.id);
+    let productIdToDelete = event.target.id;
+    this.deleteProduct(event, product, productIdToDelete);
+  }
 
-deleteProduct = (product) => {
-  console.log("Inside App.deleteProduct(), product =", product);  
-  this.resetCurrentProduct();
-}
+  deleteProduct = (event, product, productIdToDelete) => {
+    console.log("Inside App.deleteProduct(), product =", product,
+      "productIdToDelete =", productIdToDelete);
+    axios({
+      method: 'delete'
+      , url: `${this.backendURL}/products/${productIdToDelete}`
+    })
+      .then(deletedProduct => {
+        console.log("deletedProduct = ", deletedProduct);
+        this.getProducts(); // Retrieve the list of products from the database
+      });
+  }
 
- handleSubmitOrder = () => {
-  //event.preventDefault(); <== We need the event default here to go to /submit-order route!
-  console.log("Inside App.handleSubmitOrder(), state = ", this.state);    
-  
- const currentOrderId = async () => {
-    currentOrderId = this.getMaxOrderIdDb() + 1;
-    this.setState({ currentOrderId: currentOrderId});
-  };
-  
-  this.createOrderDb(this.state.currentOrder,this.state.currentOrderTotal, this.state.currentOrderId); 
-}
+  handleSubmitOrder = () => {
+    //event.preventDefault(); <== We need the event default here to go to /submit-order route!
+    console.log("Inside App.handleSubmitOrder(), state = ", this.state);
+    this.createOrderDb(this.state.currentOrder, this.state.currentOrderTotal, this.state.currentOrderId);
+  }
 
-handleCreateProduct = event => {
+  handleCreateProduct = event => {
     event.preventDefault();
     console.log("Inside App.handleCreateProduct(), state = ", this.state);
     this.createProduct();
@@ -134,23 +139,23 @@ handleCreateProduct = event => {
   }
 
   createProduct = () => {
-    console.log("Inside App.createProduct(), state = ", this.state);    
+    console.log("Inside App.createProduct(), state = ", this.state);
     axios({
       method: "post",
       url: `${this.backendURL}/products`,
       data: {
-          description: this.state.description
+        description: this.state.description
         , imageURL: this.state.imageURL
         , price: this.state.price
       }
     })
-    .then( product => {
-      this.setState( (prevState) => ({
-        dbProducts: [...prevState.dbProducts, product.data]
-       })
-     );
-     console.log("Inside App.createProduct.axios.then(), state = ", this.state, " product = ", product);
-    });
+      .then(product => {
+        this.setState((prevState) => ({
+          dbProducts: [...prevState.dbProducts, product.data]
+        })
+        );
+        console.log("Inside App.createProduct.axios.then(), state = ", this.state, " product = ", product);
+      });
   }
 
   handleUpdateCurrentProduct = (product) => {
@@ -160,84 +165,99 @@ handleCreateProduct = event => {
   }
 
   updateCurrentProduct = (product) => {
-    this.setState({currentProduct: product});
-    console.log("Inside App.updateCurrentProduct(), state = ", this.state);    
+    this.setState({ currentProduct: product });
+    console.log("Inside App.updateCurrentProduct(), state = ", this.state);
   }
 
-  resetCurrentProduct = () => {
-    this.setState({currentProduct: [] });  
-  }
-
-  handleUpdateProduct = event => {
+  handleResetCurrentProduct = (event) => {
     event.preventDefault();
-    console.log("Inside App.handleUpdateProduct(), state = ", this.state);
-    this.updateProduct();
+    console.log("Inside App.handleResetCurrentProduct() event.target =", event.target,
+      "event.target.id =", event.target.id,
+      "props =", this.props,
+      "state=", this.state);
+    this.resetCurrentProduct(event);
+  }
+
+  resetCurrentProduct = (event) => {
+    event.preventDefault();
+    console.log("Inside App.resetCurrentProduct() event.target =", event.target,
+      "event.target.id =", event.target.id,
+      "props =", this.props,
+      "state=", this.state);
+    this.setState({ currentProduct: [] });
+  }
+
+  handleUpdateProductRoute = (event, product) => {
+    event.preventDefault();
+    console.log("Inside App.handleUpdateProductRoute(), props =", this.props,
+      "state =", this.state, "product =", product, "event.target =", event.target,
+      "event.target.id =", event.target.id);
+    this.updateProductRoute(event, product);
+  }
+
+  updateProductRoute = (event, product) => {
+    console.log("Inside App.updateProductRoute(), product =", product);
+    this.props.history.push({ pathname: '/update-product', state: { product: product } });
+  }
+
+  handleUpdateProductSubmit = (event, currentProduct, updatedProduct) => {
+    event.preventDefault();
+    console.log("Inside App.handleUpdateProductSubmit(), currentProduct =", currentProduct,
+      "updatedProduct =", updatedProduct);
+    this.updateProductSubmit(event, currentProduct, updatedProduct);
     this.props.history.push('/manage-products');
   }
 
-  updateProduct = () => {
-    console.log("Inside App.updateProduct(), state = ", this.state);    
-    
-    let updatedDescription = '';
-    let updatedImageURL = '';
-    let updatedPrice = '';
+  updateProductSubmit = (event, currentProduct, updatedProduct) => {
+    console.log("Inside App.updateProductSubmit(), currentProduct =", currentProduct,
+      "updatedProduct =", updatedProduct);
 
-    updatedDescription = this.state.description 
-    ? this.state.description 
-    : this.state.currentProduct.description;
-    
-    updatedImageURL = this.state.imageURL 
-    ? this.state.imageURL 
-    : this.state.currentProduct.imageURL;
-
-    updatedPrice = this.state.price 
-    ? this.state.price 
-    : this.state.currentProduct.price.$numberDecimal;    
-    
-    axios({
-      method: "put",
-      url: `${this.backendURL}/products/${this.state.currentProduct._id}`,
-      data: {
-          description: updatedDescription 
-        , imageURL: updatedImageURL
-        , price: updatedPrice
-      }
-    })
-    .then( product => {
-     this.getProducts(); // Reset products from database
-     console.log("Inside App.createProduct.axios.then(), state = ", this.state, " product = ", product);
-     this.resetCurrentProduct();
-    }); 
+    if (! _.isEqual(currentProduct, updatedProduct)) {
+      console.log("Inside if statement, updatedProduct = ", updatedProduct);
+     
+      axios({
+        method: "put",
+        url: `${this.backendURL}/products/${updatedProduct._id}`,
+        data: {
+          description: updatedProduct.description
+          , imageURL: updatedProduct.imageURL
+          , price: updatedProduct.price
+        }
+      })
+        .then(updatedProduct => {
+          this.getProducts(); // Reset products from database
+        });
+    }
   }
-  
+
   getProducts() {
-    axios({ 
+    axios({
       method: 'get',
       url: `${this.backendURL}/products`
     })
-    .then(dbProducts => {
-      this.setState({
-        dbProducts: dbProducts.data
+      .then(dbProducts => {
+        this.setState({
+          dbProducts: dbProducts.data
+        });
+        console.log("Inside App.getProducts.axios.then(), props =", this.props, "state =", this.state);
       });
-      console.log("Inside App.getProducts.axios.then(), props =", this.props, "state =", this.state);
-    });
   }
 
   getOrders() {
-    axios({ 
+    axios({
       method: 'get',
       url: `${this.backendURL}/orders`
     })
-    .then(dbOrders => {
-      this.setState({
-        dbOrders: dbOrders.data
+      .then(dbOrders => {
+        this.setState({
+          dbOrders: dbOrders.data
+        });
+        console.log("Inside App.getOrders.axios.then(), props =", this.props, "state =", this.state);
       });
-      console.log("Inside App.getOrders.axios.then(), props =", this.props, "state =", this.state);
-    });
   }
 
   // Get highest order ID in database
-  getMaxOrderIdDb = () => { 
+  getMaxOrderIdDb = () => {
     axios({
       method: 'get'
       , url: `${this.backendURL}/orders`
@@ -255,29 +275,29 @@ handleCreateProduct = event => {
         return Math.max(...orderIds);
       });
   }
-  
- createOrderDb( currentOrder, currentOrderTotal, currentOrderId) {
+
+  createOrderDb(currentOrder, currentOrderTotal, currentOrderId) {
     console.log("Inside App.createOrderDb(), currentOrder =", currentOrder);
 
     // Create an order in the db with the current order info
-    axios({ 
-        method: 'post'
+    axios({
+      method: 'post'
       , url: `${this.backendURL}/orders`
       , data: {
-          orderId:   currentOrderId
+        orderId: currentOrderId
         , lineItems: currentOrder
-        , total:     currentOrderTotal
+        , total: currentOrderTotal
       }
     })
-    .then(dbOrder => {
-      console.log("dbOrder = ", dbOrder);
-      this.setState({
+      .then(dbOrder => {
+        console.log("dbOrder = ", dbOrder);
+        this.setState({
           // Reset current order state but save the dbOrder state for the Order receipt
-          currentOrder: [] 
-        , currentOrderTotal: 0.00
-        , dbOrder: dbOrder.data
+          currentOrder: []
+          , currentOrderTotal: 0.00
+          , dbOrder: dbOrder.data
+        });
       });
-    });     
   }
 
   getCurrentOrderTotal = (currentOrder, currentProduct = null) => {
@@ -288,7 +308,7 @@ handleCreateProduct = event => {
     });
 
     console.log("Inside getCurrentOrderTotal, currentProduct = ", currentProduct);
-    
+
     if (currentProduct) {
       total += parseFloat(currentProduct.price.$numberDecimal);
     }
@@ -298,7 +318,7 @@ handleCreateProduct = event => {
 
   render() {
     console.log("Inside App.render(), props =", this.props, "state =", this.state);
-    
+
     let linkTo = '';
     let linkText = '';
 
@@ -319,20 +339,20 @@ handleCreateProduct = event => {
         linkText = 'Admin';
         break;
 
-        case '/add-product':
-          linkTo = '/manage-products';
-          linkText = 'Admin';
-          break;
-        
-        case '/update-product':
-          linkTo = '/manage-products';
-          linkText = 'Admin';
-          break;         
+      case '/add-product':
+        linkTo = '/manage-products';
+        linkText = 'Admin';
+        break;
 
-          case '/delete-product':
-            linkTo = '/manage-products';
-            linkText = 'Admin';
-            break;
+      case '/update-product':
+        linkTo = '/manage-products';
+        linkText = 'Admin';
+        break;
+
+      case '/delete-product':
+        linkTo = '/manage-products';
+        linkText = 'Admin';
+        break;
 
       case '/order-details':
       case '/submit-order':
@@ -346,7 +366,7 @@ handleCreateProduct = event => {
         break;
 
       default: linkText = 'There is no default - this is a dummy';
-    }       
+    }
     return (
       <div className="App">
         <header>
@@ -358,59 +378,61 @@ handleCreateProduct = event => {
               <Link to={linkTo} onClick={this.handleLinkUpdate}>{linkText}</Link>
             </div>
           </div>
-          <hr />          
+          <hr />
         </header>
         <Switch>
 
           <Route exact path="/" render={(props) => <Products
             {...props} {...this.state}
             handleAddProductToOrder={this.handleAddProductToOrder}
-            handleUpdateCurrentProduct={this.handleUpdateCurrentProduct}/>}
+            handleUpdateCurrentProduct={this.handleUpdateCurrentProduct} />}
           />
 
           <Route exact path="/manage-products" render={(props) => <Products
             {...props} {...this.state}
-            handleAddProductToOrder={this.handleAddProductToOrder} 
-            handleUpdateCurrentProduct={this.handleUpdateCurrentProduct}/>}
+            handleAddProductToOrder={this.handleAddProductToOrder}
+            handleUpdateProductRoute={this.handleUpdateProductRoute}
+            handleDeleteProduct={this.handleDeleteProduct} />}
           />
 
           <Route path="/add-product" render={(props) => <ManageProduct
             {...props} {...this.state}
-            handleCreateProduct={this.handleCreateProduct}
+            handleCreateProduct={this.handleCreateProduct}s
             handleOnChange={this.handleOnChange} />}
           />
 
           <Route path="/update-product" render={(props) => <ManageProduct
-            {...props} {...this.state}
-            handleUpdateProduct={this.handleUpdateProduct}
+            {...props} 
+            handleUpdateProductSubmit={this.handleUpdateProductSubmit}
             handleOnChange={this.handleOnChange} />}
           />
 
           <Route path="/order-details" render={(props) => <Products
             {...props} {...this.state}
             handleRemoveProductFromOrder={this.handleRemoveProductFromOrder}
-            handleSubmitOrder={this.handleSubmitOrder} 
-            handleUpdateCurrentProduct={this.handleUpdateCurrentProduct}/>}
+            handleSubmitOrder={this.handleSubmitOrder}
+            handleUpdateCurrentProduct={this.handleUpdateCurrentProduct} />}
           />
 
-        <Route path="/delete-product" render={(props) => <Products
+          {/*  <Route path="/delete-product" render={(props) => <Products
             {...props} {...this.state}
             handleRemoveProductFromOrder={this.handleRemoveProductFromOrder}
             handleSubmitOrder={this.handleSubmitOrder} 
             handleUpdateCurrentProduct={this.handleUpdateCurrentProduct}
-            backendURL={this.backendURL} /> }
-          />
+            backendURL={this.backendURL}/> }
+            handleDeleteProduct={this.handleDeleteProduct}
+          /> */}
 
           <Route path="/order-confirmation" render={(props) => <Products
             {...props} {...this.state}
           />} />
-          
-          {/* <Route path="/delete-product" render={() => <Redirect to="/manage-products" />} /> */}
-          <Route path="/submit-order" render={() => <Redirect to="/order-confirmation" />} />         
+
+          <Route path="/delete-product" render={() => <Redirect to="/manage-products" />} />
+          <Route path="/submit-order" render={() => <Redirect to="/order-confirmation" />} />
           <Route path="/*" render={() => <Redirect to="/" />} />
 
         </Switch>
-        </div>
+      </div>
     );
   }
 }
