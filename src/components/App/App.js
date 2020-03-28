@@ -11,8 +11,8 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-  // this.backendURL = process.env.REACT_APP_BACKEND_APP_URL || "http://localhost:8080/api";
-    this.backendURL = 'https://js-grubhub2.herokuapp.com/api';
+   this.backendURL = process.env.REACT_APP_BACKEND_APP_URL || "http://localhost:8080/api";
+   
     this.state = {
       dbProducts: []
       , dbOrder: []  // The order we just created in the db
