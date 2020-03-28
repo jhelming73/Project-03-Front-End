@@ -47,23 +47,20 @@ const ManageProduct = (props) => {
             let updatedProduct = {};
             let currentProduct = props.location.state.product;
 
-            // Initialize the existing product values in the manage-products page
+            // Initialize the existing product values in the manage-products route
             description = props.location.state.product.description;
             imageURL = props.location.state.product.imageURL;
             imageAlt = props.location.state.product.description;
             price = props.location.state.product.price.$numberDecimal;
 
-            // Did the user make any changes to the product fields?
-            if (props.description) description = props.description;
-            if (props.imageURL) imageURL = props.imageURL;
-            if (props.price) price = props.price;
-
             updatedProduct = {
                 _id: props.location.state.product._id
-                , description: description
-                , imageURL: imageURL
-                , price: price
-            };
+                , description: props.description ? props.description : description
+                , imageURL: props.imageURL ? props.imageURL : imageURL
+                , price: props.price ? props.price : price
+            }; 
+            
+            console.log("currentProduct =",currentProduct, "updatedProduct =", updatedProduct);
 
             return (
                 <div className="ManageProduct">
@@ -78,7 +75,7 @@ const ManageProduct = (props) => {
                             <label>Image URL:</label>
                             <input type="text" name="imageURL" defaultValue={imageURL} />
                             <div className="ProductImageContainer">
-                                <img src={imageURL} alt={imageAlt}></img>
+                                <img src={updatedProduct.imageURL} alt={imageAlt}></img>
                             </div>
                         </div>
                         <div>

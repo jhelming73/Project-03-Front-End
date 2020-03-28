@@ -33,10 +33,11 @@ class App extends Component {
 
   componentDidUpdate() {
     console.log("Inside App.componentDidUpdate(), props =", this.props, "state =", this.state);
+  }
 
-    /* if (this.props.location.pathname === '/order-details' && this.state.currentOrder.length === 0) {
-      this.props.history.push('/');  // Redirect to '/' 
-    } */
+  // 
+  resetManageProductState = () => {
+    this.setState({ description: '', imageURL: '', price: '' });
   }
 
   handleAddProductToOrder = (product) => {
@@ -212,9 +213,11 @@ class App extends Component {
     console.log("Inside App.updateProductSubmit(), currentProduct =", currentProduct,
       "updatedProduct =", updatedProduct);
 
-    if (! _.isEqual(currentProduct, updatedProduct)) {
+    this.resetManageProductState(); // Reset manage product state
+
+    if (!_.isEqual(currentProduct, updatedProduct)) {
       console.log("Inside if statement, updatedProduct = ", updatedProduct);
-     
+
       axios({
         method: "put",
         url: `${this.backendURL}/products/${updatedProduct._id}`,
@@ -375,7 +378,7 @@ class App extends Component {
               <h1>Jared &amp; Seamus' Grubhub</h1>
             </div>
             <div className="SiteNav">
-              <Link to={linkTo} onClick={this.handleLinkUpdate}>{linkText}</Link>
+              <Link to={linkTo} onClick={this.resetManageProductState}>{linkText}</Link>
             </div>
           </div>
           <hr />
@@ -397,12 +400,12 @@ class App extends Component {
 
           <Route path="/add-product" render={(props) => <ManageProduct
             {...props} {...this.state}
-            handleCreateProduct={this.handleCreateProduct}s
+            handleCreateProduct={this.handleCreateProduct} s
             handleOnChange={this.handleOnChange} />}
           />
 
           <Route path="/update-product" render={(props) => <ManageProduct
-            {...props} 
+            {...props} {...this.state}
             handleUpdateProductSubmit={this.handleUpdateProductSubmit}
             handleOnChange={this.handleOnChange} />}
           />
