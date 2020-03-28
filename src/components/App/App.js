@@ -36,19 +36,17 @@ class App extends Component {
   }
   
    resetManageProductState = () => {
-     
+     console.log("Inside resetManageProductState()");
       // Reset state for form fields in the Admin add-product and update-product routes (ManageProduct component)
      this.setState({ description: '', imageURL: '', price: '' });
-     this.setState({ currentOrder: [] });
   }
 
  // Reset currentOrder
-  handleResetCurrentOrder = (event) => {
+resetCurrentOrder = (event) => {
     event.preventDefault();
-    this.resetCurrentOrder();
-  }
-  resetCurrentOrder = () => {
-    this.setState({ currentOrder: [] });
+    console.log("Inside App.resetCurrentOrder()");
+    this.setState({ currentOrder: [], currentOrderTotal: 0.00, orderId: '' });
+    this.props.history.push('/');
 }
 
   handleAddProductToOrder = (event, product) => {
@@ -127,9 +125,8 @@ class App extends Component {
   }
 
   handleSubmitOrder = (event, order) => {
-    //event.preventDefault(); <== We need the event default here to go to /submit-order route!
     console.log("Inside App.handleSubmitOrder(), order = ", order);
-    this.createOrderDb(order);
+    if (order.length !== 0) this.createOrderDb(order);
   }
 
   handleCreateProduct = event => {
@@ -262,6 +259,8 @@ class App extends Component {
   async createOrderDb(order) {
     console.log("Inside App.createOrderDb(), order =", order);
     
+   
+
     let orderTotal = 0.00;
     
     // Get the total for the order
@@ -269,6 +268,8 @@ class App extends Component {
       console.log(product);
       orderTotal += parseFloat(product.price.$numberDecimal);
     });
+
+    orderTotal = orderTotal.toFixed(2);
 
     console.log("Order Total = ", orderTotal);
     
@@ -322,17 +323,20 @@ class App extends Component {
 
     let linkTo = '';
     let linkText = '';
+    let headerLink = '';
 
     switch (this.props.location.pathname) {
 
       case '/':
         linkTo = '/manage-products';
         linkText = 'Admin';
+        headerLink = <Link to={linkTo} onClick={() => this.resetManageProductState}>{linkText}</Link>;
         break;
 
       case '/manage-products':
         linkTo = '/';
         linkText = 'Home';
+        headerLink = <Link to={linkTo} onClick={() => this.resetManageProductState}>{linkText}</Link>;
         break;
 
       case '/manage-product':
@@ -343,11 +347,13 @@ class App extends Component {
       case '/add-product':
         linkTo = '/manage-products';
         linkText = 'Admin';
+        headerLink = <Link to={linkTo} onClick={() => this.resetManageProductState}>{linkText}</Link>;
         break;
 
       case '/update-product':
         linkTo = '/manage-products';
         linkText = 'Admin';
+        headerLink = <Link to={linkTo} onClick={() => this.resetManageProductState}>{linkText}</Link>;
         break;
 
       case '/delete-product':
@@ -359,11 +365,13 @@ class App extends Component {
       case '/submit-order':
         linkTo = '/';
         linkText = 'Home';
+        headerLink = <Link to={linkTo} onClick={() => this.resetManageProductState}>{linkText}</Link>;
         break;
 
       case '/order-confirmation':
         linkTo = '/';
         linkText = 'Home';
+        headerLink = <Link to={linkTo} onClick={(event) => this.resetCurrentOrder(event)}>{linkText}</Link>;
         break;
 
       default: linkText = 'There is no default - this is a dummy';
@@ -376,7 +384,7 @@ class App extends Component {
               <h1>Jared &amp; Seamus' Grubhub</h1>
             </div>
             <div className="SiteNav">
-              <Link to={linkTo} onClick={() => this.resetManageProductState}>{linkText}</Link>
+              {headerLink}
             </div>
           </div>
           <hr />
@@ -386,7 +394,7 @@ class App extends Component {
           <Route exact path="/" render={(props) => <Products
             {...props} {...this.state}
             handleAddProductToOrder={this.handleAddProductToOrder}
-            handleUpdateCurrentProduct={this.handleUpdateCurrentProduct} />}
+            handleUpdateCurrentProduct={this.handleUpdateCurrentProduct}/>}
           />
 
           <Route exact path="/manage-products" render={(props) => <Products
@@ -416,7 +424,8 @@ class App extends Component {
           />
 
           <Route path="/order-confirmation" render={(props) => <Products
-            {...props} {...this.state} />} />
+            {...props} {...this.state} />}
+            />
 
           <Route path="/delete-product" render={() => <Redirect to="/manage-products" />} />
           <Route path="/submit-order" render={() => <Redirect to="/order-confirmation" />} />
