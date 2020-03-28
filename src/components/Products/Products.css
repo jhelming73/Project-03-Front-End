@@ -13,6 +13,8 @@
 .PageInfo h2 {
   margin: 0;
   font-size: 1em;
+  color: darkred;
+  font-family: 'Playfair Display', serif;
 }
 
 .DetailsInfo {

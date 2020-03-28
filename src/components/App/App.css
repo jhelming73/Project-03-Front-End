@@ -14,6 +14,10 @@
   flex-direction: row;
 }
 
+.App .SiteTitle {
+  font-family: 'Fontdiner Swanky', cursive;
+}
+
 .App .SiteNav {
   margin-inline-start: auto;
   margin-top: auto;

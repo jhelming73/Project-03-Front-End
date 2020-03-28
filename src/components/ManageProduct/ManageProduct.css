@@ -8,9 +8,10 @@
     text-align: left;
   }
 
-.ManageProduct ProductImageContainer {
-    width: 150px;;
+.ManageProduct .ProductImageContainer {
+    width: 150px;
     height: 100px;
+    margin-inline-start: auto;
 }
 
 /* https://www.geeksforgeeks.org/resize-image-proportionally-with-css/ */
@@ -19,3 +20,37 @@
     height: 100%;
     object-fit: contain;
 }
+
+.ManageProduct form label {
+    margin-right: 20px;
+    vertical-align: top;
+}
+
+.ManageProduct form textarea {
+    height: 75px;
+    width: 75%;
+    margin-inline-start: auto;
+}
+
+.TextAreaSection {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.PriceSection {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+
+input[type=text] {
+    margin-inline-start: auto;
+    width: 10%; 
+}
+
+.Filler {
+    width:75%;
+}
+

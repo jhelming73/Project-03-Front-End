@@ -21,20 +21,21 @@ const ManageProduct = (props) => {
                     <form
                         onChange={(event) => props.handleOnChange(event)}
                         onSubmit={(event) => props.handleCreateProduct(event)} >
-                        <div>
+                        <div className="TextAreaSection">
                             <label>Description:</label>
-                            <input type="text" name="description" defaultValue={description}/>
-                        </div>
-                        <div>
-                            <label>Image URL:</label>
-                            <input type="text" name="imageURL" defaultValue={imageURL}/>
+                            <textarea name="description" defaultValue={description}/>
+                        </div>                       
+                            <div className="TextAreaSection">
+                                <label>Image URL:</label>
+                                <textarea name="imageURL" defaultValue={imageURL}/>
+                            </div>
                             <div className="ProductImageContainer">
                                 <img src={imageURL} alt={imageAlt}></img>
-                            </div>
-                        </div>
-                        <div>
+                            </div>                        
+                        <div className="PriceSection">
                             <label>Price:</label>
                             <input type="text" name="price" defaultValue={price}/>
+                            <div className="Filler"></div>
                         </div>
                         <input type="submit" />
                     </form>
@@ -58,7 +59,7 @@ const ManageProduct = (props) => {
                 , description: props.description ? props.description : description
                 , imageURL: props.imageURL ? props.imageURL : imageURL
                 , price: props.price ? props.price : price
-            }; 
+            };
             
             console.log("currentProduct =",currentProduct, "updatedProduct =", updatedProduct);
 
@@ -67,20 +68,21 @@ const ManageProduct = (props) => {
                     <form
                         onChange={(event) => props.handleOnChange(event)}
                         onSubmit={(event) => props.handleUpdateProductSubmit(event, currentProduct, updatedProduct)}>
-                        <div>
+                        <div className="TextAreaSection">
                             <label>Description:</label>
-                            <input type="text" name="description" defaultValue={description} />
-                        </div>
-                        <div>
-                            <label>Image URL:</label>
-                            <input type="text" name="imageURL" defaultValue={imageURL} />
+                            <textarea name="description" defaultValue={description} />
+                        </div>                        
+                            <div className="TextAreaSection">
+                                <label>Image URL:</label>
+                                <textarea name="imageURL" defaultValue={imageURL} />
+                            </div>
                             <div className="ProductImageContainer">
                                 <img src={updatedProduct.imageURL} alt={imageAlt}></img>
-                            </div>
-                        </div>
-                        <div>
+                            </div>                        
+                        <div className="PriceSection">
                             <label>Price:</label>
                             <input type="text" name="price" defaultValue={price} />
+                            <div className="Filler"></div>
                         </div>
                         <input type="submit" />
                     </form>
