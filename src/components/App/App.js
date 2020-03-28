@@ -130,7 +130,7 @@ handleCreateProduct = event => {
     event.preventDefault();
     console.log("Inside App.handleCreateProduct(), state = ", this.state);
     this.createProduct();
-    this.props.history.push('/Admin');
+    this.props.history.push('/manage-products');
   }
 
   createProduct = () => {
@@ -167,33 +167,6 @@ handleCreateProduct = event => {
   resetCurrentProduct = () => {
     this.setState({currentProduct: [] });  
   }
-
-
-  // handleUpdateProduct = (product) => {
-  //   console.log("Inside App.handleUpdateProduct(), state = ", this.state);
-  //   this.updateProduct();
-  //   this.props.history.push('/Admin');
-  // }
-
-  // updateProduct = () => {
-  //   console.log("Inside App.updateProduct(), state = ", this.state);
-  //   console.log(`${this.backendURL}/products/${this.state.currentProduct._id}`);
-     
-  //   /*  axios({
-  //     method: "put",
-  //     url: `${this.backendURL}/products/${this.state.currentProduct._id}`,
-  //     data: {
-  //         description: this.state.description
-  //       , imageURL:    this.state.imageURL
-  //       , price:       this.state.price
-  //     }
-  //   })
-  //   .then( product => {
-  //     this.getProducts(); // update dbProducts     
-  //     console.log("Inside App.createProduct.axios.then(), state = ", this.state, " product = ", product);
-  //   });  */
-
-  // }
 
   handleUpdateProduct = event => {
     event.preventDefault();
