@@ -34,11 +34,22 @@ class App extends Component {
   componentDidUpdate() {
     console.log("Inside App.componentDidUpdate(), props =", this.props, "state =", this.state);
   }
-
-  // 
-  resetManageProductState = () => {
-    this.setState({ description: '', imageURL: '', price: '' });
+  
+   resetManageProductState = () => {
+     
+      // Reset state for form fields in the Admin add-product and update-product routes (ManageProduct component)
+     this.setState({ description: '', imageURL: '', price: '' });
+     this.setState({ currentOrder: [] });
   }
+
+ // Reset currentOrder
+  handleResetCurrentOrder = (event) => {
+    event.preventDefault();
+    this.resetCurrentOrder();
+  }
+  resetCurrentOrder = () => {
+    this.setState({ currentOrder: [] });
+}
 
   handleAddProductToOrder = (event, product) => {
     console.log("Inside App.handleAddProductToOrder(), product =", product);
@@ -89,20 +100,9 @@ class App extends Component {
     }
   }
 
-  handleAddDetailsToProduct = (event, product) => {
-    event.preventDefault();
-    console.log("Inside App.handleAddDetailsToProduct(), product =", product);
-    this.addDetailsToProduct(product);
-  }
-
   handleOnChange = (event) => {
     console.log("Inside App.handleOnChange(), event.target.value =", event.target.value);
     this.setState({ [event.target.name]: event.target.value });
-  }
-
-  addDetailsToProduct = (product) => {
-    console.log("Inside App.addDetailsToProduct(), product =", product);
-    this.setState(({ currentProduct: product }));
   }
 
   handleDeleteProduct = (event, product) => {
@@ -126,10 +126,10 @@ class App extends Component {
       });
   }
 
-  handleSubmitOrder = () => {
+  handleSubmitOrder = (event, order) => {
     //event.preventDefault(); <== We need the event default here to go to /submit-order route!
-    console.log("Inside App.handleSubmitOrder(), state = ", this.state);
-    this.createOrderDb(this.state.currentOrder, this.state.currentOrderTotal, this.state.currentOrderId);
+    console.log("Inside App.handleSubmitOrder(), order = ", order);
+    this.createOrderDb(order);
   }
 
   handleCreateProduct = event => {
@@ -259,48 +259,46 @@ class App extends Component {
       });
   }
 
-  // Get highest order ID in database
-  getMaxOrderIdDb = () => {
-    axios({
-      method: 'get'
-      , url: `${this.backendURL}/orders`
-    })
-      .then(dbOrders => {
-        console.log("dbOrders = ", dbOrders);
+  async createOrderDb(order) {
+    console.log("Inside App.createOrderDb(), order =", order);
+    
+    let orderTotal = 0.00;
+    
+    // Get the total for the order
+    order.forEach(product => {
+      console.log(product);
+      orderTotal += parseFloat(product.price.$numberDecimal);
+    });
 
-        // Get an array of orderIds converted to integers
-        let orderIds = dbOrders.data.map((dbOrder) => {
-          return parseInt(dbOrder.orderId);
-        });
+    console.log("Order Total = ", orderTotal);
+    
+    // Get the max orderId in the database and increment by 1
+    let allOrders = await axios.get(`${this.backendURL}/orders`);
+    console.log("allOrders.data = ", allOrders.data);
 
-        // Get the highest integer in the array
-        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max
-        return Math.max(...orderIds);
-      });
-  }
+    // Get an array of orderIds converted to integers
+    let orderIds = allOrders.data.map((order) => {
+        return parseInt(order.orderId);
+    });
 
-  createOrderDb(currentOrder, currentOrderTotal, currentOrderId) {
-    console.log("Inside App.createOrderDb(), currentOrder =", currentOrder);
+    // Get the highest integer in the array
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max
+    let maxOrderId = Math.max(...orderIds) + 1;   
+    maxOrderId = maxOrderId.toString().padStart(6, '0');
 
-    // Create an order in the db with the current order info
-    axios({
-      method: 'post'
-      , url: `${this.backendURL}/orders`
-      , data: {
-        orderId: currentOrderId
-        , lineItems: currentOrder
-        , total: currentOrderTotal
-      }
-    })
-      .then(dbOrder => {
-        console.log("dbOrder = ", dbOrder);
-        this.setState({
-          // Reset current order state but save the dbOrder state for the Order receipt
-          currentOrder: []
-          , currentOrderTotal: 0.00
-          , dbOrder: dbOrder.data
-        });
-      });
+    // https://stackoverflow.com/questions/43638938/updating-an-object-with-setstate-in-react
+    this.setState({...this.state.currentOrder, orderId: maxOrderId});
+    
+    //Create an order in the db with the current order info
+     await axios({
+       method: 'post'
+       , url: `${this.backendURL}/orders`
+       , data: {
+         orderId: maxOrderId
+         , lineItems: order
+         , total: orderTotal
+       }
+     });     
   }
 
   getCurrentOrderTotal = (currentOrder, currentProduct = null) => {
@@ -378,7 +376,7 @@ class App extends Component {
               <h1>Jared &amp; Seamus' Grubhub</h1>
             </div>
             <div className="SiteNav">
-              <Link to={linkTo} onClick={this.resetManageProductState}>{linkText}</Link>
+              <Link to={linkTo} onClick={() => this.resetManageProductState}>{linkText}</Link>
             </div>
           </div>
           <hr />
@@ -418,8 +416,7 @@ class App extends Component {
           />
 
           <Route path="/order-confirmation" render={(props) => <Products
-            {...props} {...this.state}
-          />} />
+            {...props} {...this.state} />} />
 
           <Route path="/delete-product" render={() => <Redirect to="/manage-products" />} />
           <Route path="/submit-order" render={() => <Redirect to="/order-confirmation" />} />

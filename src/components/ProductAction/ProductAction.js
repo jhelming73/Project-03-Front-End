@@ -28,7 +28,10 @@ const ProductAction = (props) => {
                     <Link to='/delete-product' id={props.product._id} onClick={(event) =>
                         props.handleDeleteProduct(event, props.product)}>Delete</Link>
                 </span>;
-            break;          
+            break;
+            
+            case '/order-confirmation':
+                break;
  
         default: productActions = 'There is no default - this is a dummy';
     }

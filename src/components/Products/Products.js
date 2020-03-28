@@ -11,7 +11,7 @@ const Products = (props) => {
     let pageInfo = '';
     let productsAction = '';
     let productsInfo = '';
-    let orderId = props.currentOrderId;
+    let orderId = props.orderId;
     let orderTotal = props.currentOrderTotal.toFixed(2);    
     let numProducts = 0;
     
@@ -28,7 +28,7 @@ const Products = (props) => {
         case '/order-details':
             pageInfo = <h2>Order Details</h2>;
             productsAction = <Link to='/submit-order' 
-                onClick={(event) => props.handleSubmitOrder(event, props.order)}>Submit Order</Link>;
+                onClick={(event) => props.handleSubmitOrder(event, props.currentOrder)}>Submit Order</Link>;
             numProducts = props.currentOrder.length;
             productsInfo   = <p>${orderTotal} ({numProducts} items)</p>;
             products = getOrderedProducts();
